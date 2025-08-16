@@ -1,0 +1,17 @@
+[package]
+name = "OnChainStudent"
+version = "1.0.0"
+authors = []
+
+[addresses]
+# Named address for your modules.
+OnChainStudent = "0xdc85284115cd06f683956a36bee54bf70144eb2d5f9497cbced98bd01c389178"
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]

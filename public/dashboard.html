@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🚀 OnChain Student Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-6">🚀 OnChain Student Dashboard</h1>
+
+    <!-- Credentials -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow mb-6">
+      <h2 class="text-xl font-semibold mb-3">🎓 Credentials</h2>
+      <ul id="credentials" class="space-y-2 text-gray-300"></ul>
+    </div>
+
+    <!-- Schemas -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow mb-6">
+      <h2 class="text-xl font-semibold mb-3">📜 Schemas</h2>
+      <ul id="schemas" class="space-y-2 text-gray-300"></ul>
+    </div>
+
+    <!-- Issuers -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow">
+      <h2 class="text-xl font-semibold mb-3">🏫 Issuers</h2>
+      <ul id="issuers" class="space-y-2 text-gray-300"></ul>
+    </div>
+  </div>
+
+  <script>
+    async function loadData() {
+      const res = await fetch("/api/data");
+      const data = await res.json();
+
+      // Clear lists
+      document.getElementById("credentials").innerHTML = "";
+      document.getElementById("schemas").innerHTML = "";
+      document.getElementById("issuers").innerHTML = "";
+
+      data.forEach(item => {
+        // Credentials
+        if (item.type.includes("CredentialManager::CredentialStore")) {
+          if (item.data.credentials.length === 0) {
+            document.getElementById("credentials").innerHTML = "<li>No credentials found.</li>";
+          } else {
+            item.data.credentials.forEach(c => {
+              document.getElementById("credentials").innerHTML += `
+                <li class="bg-gray-700 p-2 rounded">
+                  <strong>ID:</strong> ${c.id} <br>
+                  <strong>IPFS:</strong> ${c.ipfs_uri} <br>
+                  <strong>Issuer:</strong> ${c.issuer} <br>
+                  <strong>Revoked:</strong> ${c.revoked}
+                </li>
+              `;
+            });
+          }
+        }
+
+        // Schemas
+        if (item.type.includes("CredentialSchema::SchemaRegistry")) {
+          if (item.data.schemas.length === 0) {
+            document.getElementById("schemas").innerHTML = "<li>No schemas found.</li>";
+          } else {
+            item.data.schemas.forEach(s => {
+              document.getElementById("schemas").innerHTML += `
+                <li class="bg-gray-700 p-2 rounded">
+                  <strong>ID:</strong> ${s.id} <br>
+                  <strong>Name:</strong> ${s.name} <br>
+                  <strong>IPFS:</strong> ${s.ipfs_uri} <br>
+                  <strong>Version:</strong> ${s.version}
+                </li>
+              `;
+            });
+          }
+        }
+
+        // Issuers
+        if (item.type.includes("IssuerRegistry::Registry")) {
+          if (item.data.issuers.length === 0) {
+            document.getElementById("issuers").innerHTML = "<li>No issuers found.</li>";
+          } else {
+            item.data.issuers.forEach(i => {
+              document.getElementById("issuers").innerHTML += `
+                <li class="bg-gray-700 p-2 rounded">
+                  <strong>Address:</strong> ${i.addr} <br>
+                  <strong>Name:</strong> ${i.name}
+                </li>
+              `;
+            });
+          }
+        }
+      });
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
